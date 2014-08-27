@@ -1,0 +1,13 @@
+#! /bin/bash
+# ssh-keygen -t dsa
+servers=(fisher)
+
+for server in ${servers[@]}
+do
+    ssh $server "rm -rf .ssh
+    mkdir -m700 .ssh
+    cd .ssh
+    touch authorized_keys
+    chmod 600 authorized_keys"
+    cat ~/.ssh/id_dsa.pub | ssh $server "cat >> .ssh/authorized_keys"
+done

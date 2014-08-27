@@ -1,0 +1,5 @@
+#!/bin/bash
+
+python -m cProfile -o stats.output $1
+python -c "import pstats; p = pstats.Stats('stats.output'); p.sort_stats('time').print_stats(10)"
+rm stats.output
