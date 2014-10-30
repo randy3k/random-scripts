@@ -1,0 +1,8 @@
+#compdef git-update
+ 
+_git-update()
+{
+    _git-commit
+}
+
+_git-update
