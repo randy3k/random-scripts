@@ -1,8 +1,4 @@
 #compdef git-update
- 
-_git-update()
-{
-    _git-commit
-}
+#description update a file
 
-_git-update
+_git-commit
