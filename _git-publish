@@ -1,0 +1,8 @@
+#compdef git-publish
+#description publish a tag
+
+function _git-publish() {
+    _values 'values' patch minor major
+}
+
+_git-publish
