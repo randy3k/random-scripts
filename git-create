@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-read -p "Enter Repo name: " myrepo
-read -p "Enter User: " myuser
+read -e -p "Enter Repo name: " myrepo
+read -e -p "Enter User: " myuser
 ret=$(curl -s --user "$myuser" https://api.github.com/user/repos -d '{"name":"'"$myrepo"'"}')
 gitaddress=$(echo "$ret" | grep ssh_url | awk '{print $2}' | sed 's/"\(.*\)",/\1/')
 
@@ -11,7 +11,7 @@ if [[ -z $gitaddress ]]; then
 else
     echo "$gitaddress"
 fi
-read -p "git init here? [y/n] "
+read -e -p "git init here? [y/n] "
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # modified from https://gist.github.com/drewbarontini/be4b130c3a7412c84b77
 
 tag=$(git describe --abbrev=0 --tags 2>/dev/null)
