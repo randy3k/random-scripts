@@ -1,4 +1,4 @@
 #compdef git-update
-#description update a file
+#description update files
 
 _git-commit
