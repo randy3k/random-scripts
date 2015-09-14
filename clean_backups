@@ -3,7 +3,7 @@
 # clean old time machine backups
 
 read -e -p "Enter Year: " year
-read -e -p "Enter Month: " month
+read -e -p "Enter Month (without leading zero): " month
 month=$(printf %02d $month)
 read -e -p "Remove all backups in $year-$month? [y/n] "
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
