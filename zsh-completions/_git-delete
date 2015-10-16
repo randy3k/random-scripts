@@ -1,0 +1,5 @@
+#compdef git-delete
+#description delete a branch or a tag
+
+__git_tags
+__git_branch_names

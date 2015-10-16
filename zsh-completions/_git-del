@@ -1,5 +1,0 @@
-#compdef git-del
-#description del a branch or a tag
-
-__git_tags
-__git_branch_names

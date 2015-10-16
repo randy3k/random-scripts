@@ -2,5 +2,5 @@
 
 find ./ -type l | while read nullsymlink ;
 do wrongpath=$(readlink "$nullsymlink") ;
-right=$(echo "$wrongpath" | sed s'|Randy/Google Drive/Documents|Randy/Documents|') ;
+right=$(echo "$wrongpath" | sed s'|PhD|UCDavis|') ;
 ln -fs "$right" "$nullsymlink" ; done
