@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+
+set -e
+
+cd /opt/local/julia
+make clean
+git checkout master
+git pull
+make -j8
+make install prefix=/opt/local/julia-dev
