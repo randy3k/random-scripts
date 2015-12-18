@@ -2,7 +2,7 @@
 #description publish a tag
 
 function _git-publish() {
-    _values 'values' patch minor major
+    _values 'values' patch minor major prerelease prepatch preminor premajor
 }
 
 _git-publish
