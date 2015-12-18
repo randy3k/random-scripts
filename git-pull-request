@@ -64,57 +64,41 @@ def smart_incremented_tag(tag, release_type):
     return None
 
 
-def stop(str):
-    print(str)
-    sys.exit(0)
-
-
 def git(args, throw_error=False):
-    p = subprocess.Popen(["git"]+args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if throw_error:
+        p = subprocess.Popen(["git"]+args, stdout=subprocess.PIPE)
+    else:
+        p = subprocess.Popen(["git"]+args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
-    out, err = p.communicate()
-    if out:
-        out = out.decode("utf-8").strip()
-    if err and throw_error:
-        err = err.decode("utf-8").strip()
-        if err:
-            stop(err)
-    return out
+    stdout, _ = p.communicate()
+    if stdout:
+        return stdout.decode("utf-8").strip()
 
 
-def main():
-    lastest_tag = git([
-        "for-each-ref",
-        "--sort=-taggerdate",
-        "--format='%(refname:short)'",
-        "--count=1",
-        "refs/tags"
-        ])
+sha = git(["rev-list", "--tags", "--max-count=1"])
 
-    if not lastest_tag:
-        lastest_tag = "v0.0.0"
+if sha:
+    lastest_tag = git(["describe", "--tags", sha])
+else:
+    lastest_tag = "v0.0.0"
 
-    releast_type = sys.argv[1]
+releast_type = sys.argv[1]
 
-    if releast_type not in [
-        "major",
-        "minor",
-        "patch",
-        "premajor",
-        "preminor",
-        "prepatch",
-        "prerelease"
-    ]:
-        stop("Invalid release type: %s." % releast_type)
+if releast_type not in [
+    "major",
+    "minor",
+    "patch",
+    "premajor"
+    "preminor",
+    "prepatch",
+    "prerelease",
+]:
+    raise ValueError("Invalid release type.")
 
-    next_tag = smart_incremented_tag(lastest_tag, releast_type)
+next_tag = smart_incremented_tag(lastest_tag, releast_type)
 
-    if not next_tag:
-        stop("Cannot parse lastest tag: %s" % lastest_tag)
+if not next_tag:
+    raise Exception("Cannot parse lastest tag: %s" % lastest_tag)
 
-    git(["tag", "-a", next_tag, "-m", "Version %s" % next_tag], throw_error=True)
-    print("Tag '%s'!" % next_tag)
-
-
-if __name__ == "__main__":
-    main()
+git(["tag", next_tag, "-m", "Version %s" % next_tag], throw_error=True)
+print("Tag %s!" % next_tag)
