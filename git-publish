@@ -86,7 +86,7 @@ def main():
     lastest_tag = git([
         "for-each-ref",
         "--sort=-taggerdate",
-        "--format='%(refname:short)'",
+        "--format=%(refname:short)",
         "--count=1",
         "refs/tags"
         ])
