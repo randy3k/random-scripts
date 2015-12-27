@@ -83,13 +83,7 @@ def git(args, throw_error=False):
 
 
 def main():
-    lastest_tag = git([
-        "for-each-ref",
-        "--sort=-taggerdate",
-        "--format=%(refname:short)",
-        "--count=1",
-        "refs/tags"
-        ])
+    lastest_tag = git(["describe", "--tags", "--abbrev=0"])
 
     if not lastest_tag:
         lastest_tag = "v0.0.0"
