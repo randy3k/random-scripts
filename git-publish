@@ -83,11 +83,6 @@ def git(args, throw_error=False):
 
 
 def main():
-    lastest_tag = git(["describe", "--tags", "--abbrev=0"])
-
-    if not lastest_tag:
-        lastest_tag = "v0.0.0"
-
     releast_type = sys.argv[1]
 
     if releast_type not in [
@@ -100,6 +95,11 @@ def main():
         "prerelease"
     ]:
         stop("Invalid release type: %s." % releast_type)
+
+    lastest_tag = git(["describe", "--tags", "--abbrev=0"])
+
+    if not lastest_tag:
+        lastest_tag = "v0.0.0"
 
     next_tag = smart_incremented_tag(lastest_tag, releast_type)
 
