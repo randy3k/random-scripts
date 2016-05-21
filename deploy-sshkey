@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# ssh-keygen -t rsa
+servers=(hannan hilbert gumbel gcox germain)
+
+for server in ${servers[@]}
+do
+    # ssh $server "rm -rf .ssh
+    # mkdir -m700 .ssh
+    # cd .ssh
+    # touch authorized_keys
+    # chmod 600 authorized_keys"
+    cat ~/.ssh/id_rsa.pub | ssh $server "cat > .ssh/authorized_keys"
+done
+
+# for openssh, we may need to edit /etc/ssh/sshd_config
+#     AuthorizedKeysFile    %h/.ssh/authorized_keys
+#     PubkeyAcceptedKeyTypes=+ssh-dss
