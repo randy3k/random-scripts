@@ -2,9 +2,11 @@
 
 set -e
 
-cd /opt/local/julia
-make clean
-git checkout master
-git pull
-make -j8
-make install prefix=/opt/local/julia-dev
+curl -L https://status.julialang.org/download/osx10.7+ -o ~/Downloads/julia.dmg
+hdiutil attach ~/Downloads/julia.dmg
+cd /Volumes/Julia*/Julia*/Contents/Resources
+rm -rf /opt/local/julia-dev
+cp -r julia /opt/local/julia-dev
+diskutil umount force /Volumes/Julia* 2> /dev/null
+hdiutil detach /Volumes/Julia* 2> /dev/null
+rm -rf ~/Downloads/julia.dmg
