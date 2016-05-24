@@ -2,20 +2,23 @@
 export PATH=$PATH:/usr/local/bin
 [ "$TMUX" == "" ] || exit 0
 
-
-get_sessions()
-{
-    echo $(tmux list-sessions -F "#S" 2>/dev/null)
-}
-
 create_default_session()
 {
     tmux has-session -t _default 2>/dev/null || tmux new-session -s _default -d
 }
 
+get_sessions()
+{
+    tmux list-sessions -F "#S" 2>/dev/null
+}
+
 kill_session()
 {
-    sessions=($(get_sessions))
+    sessions=()
+    while read -r line; do
+        sessions+=("$line")
+    done <<< "$(get_sessions)"
+
     [[ -z $sessions ]] && exit
 
     # PS3="session to kill: "
@@ -26,9 +29,9 @@ kill_session()
     select opt in "${sessions[@]}"
     do
         case "$opt" in
-            *)  
+            *)
                 [[ -z "$opt" ]] && continue
-                
+
                 read -e -p "kill $opt? [y/n] "
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
                     tmux kill-session -t $opt 2>/dev/null
@@ -43,8 +46,13 @@ main_menu()
 {
     # options=("[new session]" "[kill session]" "[shell]")
     options=("[new session]" "[kill session]")
-    sessions=$(get_sessions)
-    [ ! -z $session ] || options=($sessions "${options[@]}")
+
+    sessions=()
+    while read -r line; do
+        sessions+=("$line")
+    done <<< "$(get_sessions)"
+
+    [ ! -z "$sessions" ] && options=("${sessions[@]}" "${options[@]}")
 
     echo "tmux sessions:"
     echo "---------------------"
@@ -75,5 +83,4 @@ main_menu()
     done
 }
 
-create_default_session
 main_menu
