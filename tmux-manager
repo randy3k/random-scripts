@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 export PATH=$PATH:/usr/local/bin
 [ "$TMUX" == "" ] || exit 0
 
@@ -52,7 +52,7 @@ main_menu()
         sessions+=("$line")
     done <<< "$(get_sessions)"
 
-    [ ! -z "$sessions" ] && options=("${sessions[@]}" "${options[@]}")
+    [ ! -z "$sessions" ] && options+=("${sessions[@]}")
 
     echo "tmux sessions:"
     echo "---------------------"
