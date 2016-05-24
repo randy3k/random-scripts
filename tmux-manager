@@ -40,7 +40,6 @@ kill_session()
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
                     tmux kill-session -t "$opt" 2>/dev/null
                 fi
-                [ "$?" -eq 0  ] && kill_session
                 ;;
         esac
     done
@@ -63,7 +62,7 @@ main_menu()
         case "$opt" in
             "[new session]")
                 read -e -p "new session name: " SESSION_NAME
-                tmux new -s "$SESSION_NAME" 2>/dev/null
+                tmux new -s "$SESSION_NAME" 2> /dev/null
                 [ "$?" -eq 0  ] || tmux new
                 break
                 ;;
@@ -76,7 +75,7 @@ main_menu()
                 break
                 ;;
             *)
-                tmux attach-session -t "$opt" 2>/dev/null
+                tmux attach-session -t "$opt" 2> /dev/null
                 [ "$?" -eq 0  ] && break
                 ;;
         esac
