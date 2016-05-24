@@ -76,7 +76,7 @@ main_menu()
                 break
                 ;;
             *)
-                tmux attach-session -t $opt 2>/dev/null
+                tmux attach-session -t "$opt" 2>/dev/null
                 [ "$?" -eq 0  ] && break
                 ;;
         esac
