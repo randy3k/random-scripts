@@ -68,7 +68,6 @@ _main_menu()
         [[ -n "$line" ]] && options+=("$line")
     done <<< "$(get_sessions)"
 
-    echo ""
     echo "tmux sessions:"
     echo "---------------------"
     PS3="option: "
@@ -104,6 +103,7 @@ main_menu()
 {
     _main_menu
     while [ "$?" -ne 0 ]; do
+        echo ""
         _main_menu
     done
 }

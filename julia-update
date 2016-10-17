@@ -7,6 +7,6 @@ hdiutil attach ~/Downloads/julia.dmg
 cd /Volumes/Julia*/Julia*/Contents/Resources
 rm -rf /opt/local/julia-dev
 cp -r julia /opt/local/julia-dev
-diskutil umount force /Volumes/Julia* 2> /dev/null
-hdiutil detach /Volumes/Julia* 2> /dev/null
+# diskutil umount force /Volumes/Julia*
+hdiutil detach -force /Volumes/Julia*
 rm -rf ~/Downloads/julia.dmg
