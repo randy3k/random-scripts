@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-servers=(hannan hilbert gumbel gcox germain)
-servers+=(gauss viz2)
-
-for server in ${servers[@]}; do
-    echo "$server"
-    ssh $server "curl -s https://raw.githubusercontent.com/randy3k/server-bootstrap/master/bootstrap.sh | bash 2> /dev/null"
-done
