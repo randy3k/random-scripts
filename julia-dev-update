@@ -2,7 +2,7 @@
 
 set -e
 
-curl -L https://status.julialang.org/download/osx10.7+ -o ~/Downloads/julia.dmg
+curl -L https://julialangnightlies-s3.julialang.org/bin/mac/x64/julia-latest-mac64.dmg -o ~/Downloads/julia.dmg
 hdiutil attach ~/Downloads/julia.dmg
 cd /Volumes/Julia*/Julia*/Contents/Resources
 rm -rf /opt/local/julia-dev
