@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-if [ -z "$(tty)" ]; then
-    exec /usr/local/bin/gpg "$@"
-else
-    exec /usr/local/MacGPG2/bin/gpg2 "$@"
-fi
