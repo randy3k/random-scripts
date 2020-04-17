@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+
+# set -e
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+# read -s UCDPASSWORD
+# security add-generic-password -a rcslai -s UCDPASSWORD -w $UCDPASSWORD
+
+UCDPASSWORD=$(security find-generic-password -a rcslai -s UCDPASSWORD -w)
+
+[[ -z "$UCDPASSWORD" ]] && echo "cannot find password" && exit 1
+
+echo logging to /usr/local/var/log/ucdvpn.log
+
+echo "$UCDPASSWORD" | \
+    openconnect --juniper -u rcslai --passwd-on-stdin \
+    --script "vpn-slice 169.237.0.0/16" vpn.library.ucdavis.edu \
+    1>/usr/local/var/log/ucdvpn.log 2>&1
+
+# echo "$UCDPASSWORD" | \
+#     openconnect --juniper -u rcslai --passwd-on-stdin \
+#     --script-tun --script "ocproxy -D 8080" vpn.library.ucdavis.edu \
+#     1>/usr/local/var/log/ucdvpn.log 2>&1
