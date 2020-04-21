@@ -1,27 +1,109 @@
 #! /usr/bin/env bash
 
-# set -e
+set -e
 
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
-  exit
+if [ "$EUID" -eq 0 ]
+    then echo "Please run as regular user"
+    exit
 fi
+
+while [ "$#" -ne 0 ]; do
+    key="$1"
+    case "$key" in
+        --help|-h)
+            echo "usage: ucdvpn [-b] [--library] [--proxy]"
+            exit 1
+        ;;
+        --library)
+            USE_LIBRARY_VPN="true"
+            shift 1
+        ;;
+        --proxy)
+            PROXY="true"
+            USE_LIBRARY_VPN="true"
+            shift 1
+        ;;
+        -b)
+            BACKGROUND="true"
+            shift 1
+        ;;
+        --status|-s)
+            VPN_STATUS="true"
+            shift 1
+        ;;
+        --kill)
+            VPN_KILL="true"
+            shift 1
+        ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+        ;;
+    esac
+done
 
 # read -s UCDPASSWORD
 # security add-generic-password -a rcslai -s UCDPASSWORD -w $UCDPASSWORD
 
+function vpn-status {
+	N=$(ps aux | grep openconnect | grep -v grep | wc -l)
+	if [[ $N -eq 0 ]]; then
+		echo "vpn is not connected"
+	elif [[ $N -ge 1 ]]; then
+		echo "vpn is connected"
+	fi
+}
+
+if [[ "$VPN_STATUS" = "true" ]]; then
+	vpn-status
+	exit 0
+fi
+
+if [[ "$VPN_KILL" = "true" ]]; then
+	vpn-status
+	sudo pkill "openconnect"
+	sleep 1
+	vpn-status
+	exit 0
+fi
+
+
 UCDPASSWORD=$(security find-generic-password -a rcslai -s UCDPASSWORD -w)
 
-[[ -z "$UCDPASSWORD" ]] && echo "cannot find password" && exit 1
+[[ -z "$UCDPASSWORD" ]] && echo "cannot find ucd password" && exit 1
 
-echo logging to /usr/local/var/log/ucdvpn.log
 
-echo "$UCDPASSWORD" | \
-    openconnect --juniper -u rcslai --passwd-on-stdin \
-    --script "vpn-slice 169.237.0.0/16" vpn.library.ucdavis.edu \
-    1>/usr/local/var/log/ucdvpn.log 2>&1
+if [[ "$PROXY" = "true" ]]; then
+	CALL=(openconnect)
+	SCRIPT=(--script-tun --script '"ocproxy -D 8080"')
+else
+	CALL=(sudo openconnect)
+	SCRIPT=(--script '"vpn-slice 169.237.0.0/16"')
+fi
 
-# echo "$UCDPASSWORD" | \
-#     openconnect --juniper -u rcslai --passwd-on-stdin \
-#     --script-tun --script "ocproxy -D 8080" vpn.library.ucdavis.edu \
-#     1>/usr/local/var/log/ucdvpn.log 2>&1
+if [[ "$BACKGROUND" = "true" ]]; then
+	CALL+=(-b)
+fi
+
+CALL+=(--juniper -u rcslai --passwd-on-stdin)
+CALL+=(${SCRIPT[@]})
+
+
+if [[ "$USE_LIBRARY_VPN" = "true" ]]; then
+	STDINTEXT="$UCDPASSWORD"
+	ADDR="vpn.library.ucdavis.edu"
+else
+	OTP=$(pass otp ucdduo)
+	[[ -z "$OTP" ]] && echo "cannot find otp" && exit 1
+	STDINTEXT="$UCDPASSWORD\n$OTP"
+	ADDR="vpn.ucdavis.edu"
+fi
+
+CALL+=($ADDR)
+
+if [[ "$BACKGROUND" = "true" ]]; then
+	echo "logging to /usr/local/var/log/ucdvpn.log"
+	eval ${CALL[@]} < <(echo -e "$STDINTEXT") 1>/usr/local/var/log/ucdvpn.log 2>&1
+else
+	eval ${CALL[@]} < <(echo -e "$STDINTEXT")
+fi
