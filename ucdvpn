@@ -42,8 +42,6 @@ while [ "$#" -ne 0 ]; do
     esac
 done
 
-# read -s UCDPASSWORD
-# security add-generic-password -a rcslai -s UCDPASSWORD -w $UCDPASSWORD
 
 function vpn-status {
 	N=$(ps aux | grep openconnect | grep -v grep | wc -l)
@@ -68,7 +66,7 @@ if [[ "$VPN_KILL" = "true" ]]; then
 fi
 
 
-UCDPASSWORD=$(security find-generic-password -a rcslai -s UCDPASSWORD -w)
+UCDPASSWORD=$(pass ucdpw)
 
 [[ -z "$UCDPASSWORD" ]] && echo "cannot find ucd password" && exit 1
 
